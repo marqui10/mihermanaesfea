@@ -234,7 +234,7 @@
         document.getElementById('pista-texto').innerText = `${data.tipo === 'empieza' ? 'Empieza por' : 'Contiene'} la ${data.letra}`;
         document.getElementById('definicion-texto').innerText = data.def;
         document.getElementById('item-img').src = `imagen/imagen${data.letra}.png`;
-        player.src = `audio/audio${data.letra}.mp3`; player.load();
+        player.src = `audio/audio${data.letra}.oga`; player.load();
         resetAudioUI();
         document.getElementById('user-input').value = ''; document.getElementById('user-input').focus();
         startTimer();
