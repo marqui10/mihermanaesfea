@@ -177,7 +177,7 @@
     </div>
 
     <div id="ui-final" style="display:none; text-align:center; flex:1.2;">
-        <h2>Fin del Juego</h2>
+        <h2>¡ROSCO COMPLETADO!</h2>
         <div id="score" style="font-size:5rem; font-weight:900; color:var(--success);">0</div>
         <button onclick="location.reload()" class="action btn-send" style="width:100%;">Reiniciar</button>
     </div>
@@ -213,7 +213,7 @@
         { letra: 'W', tipo: 'empieza', palabra: 'Warfarina', def: 'Anticoagulante oral que ayuda a prevenir la formación de coágulos sanguíneos.' },
         { letra: 'X', tipo: 'contiene', palabra: 'Luxación', def: 'Desplazamiento de una articulación que requiere realineación y apoyo.' },
         { letra: 'Y', tipo: 'contiene', palabra: 'Escayola', def: 'Vendaje rígido utilizado para inmovilizar de forma total y estricta huesos fracturados, cubriendo articulaciones superiores e inferiores a la lesión.' },
-        { letra: 'Z', tipo: 'empieza', palabra: 'Esterilización', def: 'Proceso de eliminación de toda forma microbiana incluyendo esporas, fundamental en la labor del TCAE.' },
+        { letra: 'Z', tipo: 'contiene', palabra: 'Esterilización', def: 'Proceso de eliminación de toda forma microbiana incluyendo esporas, fundamental en la labor del TCAE.' },
     ];
 
     let pendientes = [...preguntasBase], aciertos = 0, currentIdx = 0, timerInterval, timeLeft = TIME_LIMIT;
