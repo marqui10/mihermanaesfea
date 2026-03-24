@@ -24,7 +24,23 @@
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh; margin: 0; padding: 20px;
+            overflow: hidden;
         }
+
+        /* Pantalla de Inicio */
+        #welcome-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--primary);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 2000; color: white; text-align: center;
+        }
+        .start-btn {
+            background: var(--success); color: white; border: none;
+            padding: 20px 50px; font-size: 1.5rem; font-weight: 800;
+            border-radius: 50px; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2); margin-top: 20px;
+        }
+        .start-btn:hover { transform: scale(1.1); background: #2ecc71; }
 
         .game-container {
             background: rgba(255, 255, 255, 0.98);
@@ -42,7 +58,6 @@
             font-weight: 700; font-size: 0.75rem; box-shadow: 0 4px 10px rgba(26, 42, 108, 0.2);
             transition: 0.3s; text-transform: uppercase; z-index: 100;
         }
-        .pdf-btn:hover { background: var(--secondary); transform: translateY(-2px); }
 
         .rosco-section { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; }
         .rosco-wrapper { position: relative; width: 380px; height: 380px; margin-top: 20px; }
@@ -92,7 +107,6 @@
         }
 
         .audio-container { position: relative; width: 75px; height: 75px; margin: 15px auto; cursor: pointer; }
-        .audio-container svg { transform: rotate(0deg); }
         .progress-ring__circle { transition: stroke-dashoffset 0.1s; transform-origin: 50% 50%; stroke: var(--primary); }
         .play-pause-icon {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -108,12 +122,17 @@
         .btn-send { background: var(--primary); color: white; }
         .btn-skip { background: var(--gray-light); }
 
-        .modal { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; cursor: zoom-out; }
-        .modal img { max-width: 90%; max-height: 90%; border-radius: 8px; transition: 0.3s; transform: scale(0.8); }
-        .modal.open img { transform: scale(1); }
+        .modal { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; }
+        .modal img { max-width: 90%; max-height: 90%; border-radius: 8px; }
     </style>
 </head>
 <body>
+
+<div id="welcome-screen">
+    <h1>PASAPALABRA TFM</h1>
+    <p>Haz clic en el botón para iniciar el tiempo y el audio.</p>
+    <button class="start-btn" onclick="comenzarJuego()">¡COMENZAR!</button>
+</div>
 
 <div id="image-modal" class="modal" onclick="closeModal()">
     <img id="modal-content" src="">
@@ -124,7 +143,6 @@
 
     <div class="rosco-section">
         <div class="rosco-wrapper" id="rosco"></div>
-        
         <div class="timer-container">
             <svg class="timer-svg">
                 <circle class="timer-circle-bg" r="40" cx="45" cy="45"></circle>
@@ -136,12 +154,10 @@
 
     <div class="content-section" id="ui-juego">
         <div class="info-panel">
-            <span id="pista-texto" style="background:#ebf1ff; padding:5px 15px; border-radius:50px; font-size:0.75rem; font-weight:800; color:var(--primary)">CARGANDO...</span>
+            <span id="pista-texto" style="background:#ebf1ff; padding:5px 15px; border-radius:50px; font-size:0.75rem; font-weight:800; color:var(--primary)">ESPERANDO...</span>
             <h3 id="definicion-texto" style="margin: 15px 0;"></h3>
             <img id="item-img" src="" alt="Pista" onclick="openModal(this.src)">
-            
             <audio id="audio-player"></audio>
-            
             <div class="audio-container" id="audio-btn-container" onclick="toggleAudio()">
                 <svg width="75" height="75">
                     <circle stroke="#e2e8f0" stroke-width="4" fill="transparent" r="34" cx="37.5" cy="37.5"/>
@@ -153,7 +169,7 @@
                 </div>
             </div>
         </div>
-        <input type="text" id="user-input" placeholder="Tu respuesta..." autocomplete="off">
+        <input type="text" id="user-input" placeholder="Escribe aquí..." autocomplete="off">
         <div class="btns-action">
             <button class="action btn-send" onclick="comprobar()">Validar</button>
             <button class="action btn-skip" onclick="pasar()">Pasapalabra</button>
@@ -200,11 +216,9 @@
         { letra: 'Z', tipo: 'empieza', palabra: 'zoonosis', def: 'Enfermedades infecciosas transmisibles de animales a humanos, relevantes en el contexto de mordeduras o arañazos.' },
     ];
 
-
     let pendientes = [...preguntasBase], aciertos = 0, currentIdx = 0, timerInterval, timeLeft = TIME_LIMIT;
     const player = document.getElementById('audio-player'), btnContainer = document.getElementById('audio-btn-container');
-    const audioProgress = document.getElementById('audio-progress');
-    const timerNum = document.getElementById('timer-num'), timerProg = document.getElementById('timer-prog');
+    const audioProgress = document.getElementById('audio-progress'), timerNum = document.getElementById('timer-num'), timerProg = document.getElementById('timer-prog');
 
     function init() {
         const rosco = document.getElementById('rosco');
@@ -218,7 +232,20 @@
         });
         player.onended = () => resetAudioUI();
         player.ontimeupdate = updateAudioProgress;
-        render();
+        
+        // Preparamos la UI de la letra A, pero todo congelado
+        const data = pendientes[currentIdx];
+        document.getElementById(`dot-${data.letra}`).classList.add('active');
+        document.getElementById('pista-texto').innerText = `${data.tipo === 'empieza' ? 'Empieza por' : 'Contiene'} la ${data.letra}`;
+        document.getElementById('definicion-texto').innerText = data.def;
+        document.getElementById('item-img').src = `imagen/imagen${data.letra}.png`;
+        player.src = `audio/audio${data.letra}.oga`;
+        player.load();
+    }
+
+    function comenzarJuego() {
+        document.getElementById('welcome-screen').style.display = 'none';
+        render(); // Llama al render que arranca tiempo y audio
     }
 
     function render() {
@@ -230,13 +257,15 @@
         document.getElementById('definicion-texto').innerText = data.def;
         document.getElementById('item-img').src = `imagen/imagen${data.letra}.png`;
         
-        // Carga y REPRODUCCIÓN AUTOMÁTICA
         player.src = `audio/audio${data.letra}.oga`; 
         player.load();
-        player.play().catch(e => console.log("Auto-play bloqueado por el navegador hasta interactuar"));
+        
+        // Ahora el audio suena SIEMPRE porque el usuario ya pulsó "Comenzar"
+        player.play();
         btnContainer.classList.add('playing');
         
-        document.getElementById('user-input').value = ''; document.getElementById('user-input').focus();
+        document.getElementById('user-input').value = ''; 
+        document.getElementById('user-input').focus();
         startTimer();
     }
 
@@ -269,8 +298,6 @@
         const input = document.getElementById('user-input').value.toLowerCase().trim();
         const data = pendientes[currentIdx];
         const norm = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        
-        // Soporte para múltiples opciones o una sola palabra
         const opciones = Array.isArray(data.palabra) ? data.palabra : [data.palabra];
         const esCorrecto = opciones.some(op => norm(input) === norm(op.toLowerCase().trim()));
 
@@ -286,8 +313,7 @@
     function pasar() { clearInterval(timerInterval); player.pause(); currentIdx = (currentIdx + 1) % pendientes.length; render(); }
     
     function avanzar() { 
-        clearInterval(timerInterval); 
-        player.pause(); 
+        clearInterval(timerInterval); player.pause(); 
         pendientes.splice(currentIdx, 1); 
         if (pendientes.length === 0) return end();
         if (currentIdx >= pendientes.length) currentIdx = 0; 
@@ -295,9 +321,8 @@
     }
     
     function end() { clearInterval(timerInterval); document.querySelector('.rosco-section').style.display = 'none'; document.getElementById('ui-juego').style.display = 'none'; document.getElementById('ui-final').style.display = 'block'; document.getElementById('score').innerText = aciertos; }
-
-    function openModal(src) { const m = document.getElementById('image-modal'); document.getElementById('modal-content').src = src; m.style.display = "flex"; setTimeout(() => m.classList.add('open'), 10); }
-    function closeModal() { const m = document.getElementById('image-modal'); m.classList.remove('open'); setTimeout(() => m.style.display = "none", 300); }
+    function openModal(src) { const m = document.getElementById('image-modal'); document.getElementById('modal-content').src = src; m.style.display = "flex"; }
+    function closeModal() { document.getElementById('image-modal').style.display = "none"; }
 
     function descargarSoluciones() {
         const { jsPDF } = window.jspdf;
@@ -305,28 +330,17 @@
         doc.setFillColor(26, 42, 108); doc.rect(0, 0, 210, 40, 'F');
         doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(22);
         doc.text("REPORTE DE SOLUCIONES", 105, 20, { align: "center" });
-        doc.setFontSize(10); doc.setFont("helvetica", "normal");
-        doc.text("Proyecto TFM - Aplicación Multimedia Pasapalabra", 105, 30, { align: "center" });
-
         const rows = preguntasBase.map(p => {
-            const txtPalabra = Array.isArray(p.palabra) ? p.palabra.join(" / ") : p.palabra;
-            return [p.letra, p.tipo.toUpperCase(), txtPalabra.toUpperCase(), p.def];
+            const txt = Array.isArray(p.palabra) ? p.palabra.join(" / ") : p.palabra;
+            return [p.letra, p.tipo.toUpperCase(), txt.toUpperCase(), p.def];
         });
-
         doc.autoTable({
             head: [['Letra', 'Tipo', 'Palabra Correcta', 'Definición']],
-            body: rows,
-            startY: 50,
-            theme: 'striped',
-            headStyles: { fillColor: [26, 42, 108], textColor: 255, fontStyle: 'bold' },
-            styles: { fontSize: 9, cellPadding: 3 },
-            columnStyles: {
-                0: { cellWidth: 15, halign: 'center', fontStyle: 'bold' },
-                1: { cellWidth: 25 },
-                2: { cellWidth: 35, fontStyle: 'bold', textColor: [26, 42, 108] }
-            }
+            body: rows, startY: 50, theme: 'striped',
+            headStyles: { fillColor: [26, 42, 108] },
+            columnStyles: { 0: { cellWidth: 15 }, 2: { cellWidth: 35, fontStyle: 'bold' } }
         });
-        doc.save("Soluciones_Pasapalabra.pdf");
+        doc.save("Reporte_Soluciones_Pasapalabra.pdf");
     }
 
     document.getElementById('user-input').addEventListener('keyup', (e) => { if(e.key === 'Enter') comprobar(); });
