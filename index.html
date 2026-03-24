@@ -187,7 +187,7 @@
         { letra: 'N', tipo: 'empieza', palabra: 'Necrosis', def: 'Proceso patológico caracterizado por la muerte de células y tejidos en un organismo vivo' },
         { letra: 'Ñ', tipo: 'contiene', palabra: 'Riñón', def: 'Órgano excretor, generalmente en número par, que se encarga de filtrar la sangre para eliminar los residuos del metabolismo en forma de orina' },
         { letra: 'O', tipo: 'empieza', palabra: 'Oxígeno', def: 'Elemento químico gaseoso esencial para la respiración que constituye aproximadamente el 21% de la atmósfera terrestre.' },
-        { letra: 'P', tipo: 'empieza', palabra: 'Paro', def: 'Fallo súbito de la actividad circulatoria y/o respiratoria.' },
+        { letra: 'P', tipo: 'empieza', palabra: ['Paro', 'Parada'], def: 'Fallo súbito de la actividad circulatoria y/o respiratoria.' },
         { letra: 'Q', tipo: 'empieza', palabra: 'Quemadura', def: 'Lesión de piel y tejidos por calor, llamas, sustancias químicas o radiación.' },
         { letra: 'R', tipo: 'empieza', palabra: 'Reanimación', def: 'Conjunto de medidas terapéuticas que se aplican para recuperar o mantener las constantes vitales del organismo' },
         { letra: 'S', tipo: 'empieza', palabra: 'Síncope', def: 'Pérdida repentina y temporal de la consciencia y del tono postural caracterizada por una recuperación rápida y completa.' },
@@ -264,16 +264,27 @@
     }
 
     function timeoutFail() { document.getElementById(`dot-${pendientes[currentIdx].letra}`).classList.add('error'); avanzar(); }
+    
     function comprobar() {
         const input = document.getElementById('user-input').value.toLowerCase().trim();
         const data = pendientes[currentIdx];
         const norm = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        if (norm(input) === norm(data.palabra.toLowerCase())) { document.getElementById(`dot-${data.letra}`).classList.add('success'); aciertos++; }
-        else { document.getElementById(`dot-${data.letra}`).classList.add('error'); }
+        
+        // Soporte para múltiples opciones o una sola palabra
+        const opciones = Array.isArray(data.palabra) ? data.palabra : [data.palabra];
+        const esCorrecto = opciones.some(op => norm(input) === norm(op.toLowerCase().trim()));
+
+        if (esCorrecto) { 
+            document.getElementById(`dot-${data.letra}`).classList.add('success'); 
+            aciertos++; 
+        } else { 
+            document.getElementById(`dot-${data.letra}`).classList.add('error'); 
+        }
         avanzar();
     }
 
     function pasar() { clearInterval(timerInterval); player.pause(); currentIdx = (currentIdx + 1) % pendientes.length; render(); }
+    
     function avanzar() { 
         clearInterval(timerInterval); 
         player.pause(); 
@@ -297,7 +308,11 @@
         doc.setFontSize(10); doc.setFont("helvetica", "normal");
         doc.text("Proyecto TFM - Aplicación Multimedia Pasapalabra", 105, 30, { align: "center" });
 
-        const rows = preguntasBase.map(p => [p.letra, p.tipo.toUpperCase(), p.palabra.toUpperCase(), p.def]);
+        const rows = preguntasBase.map(p => {
+            const txtPalabra = Array.isArray(p.palabra) ? p.palabra.join(" / ") : p.palabra;
+            return [p.letra, p.tipo.toUpperCase(), txtPalabra.toUpperCase(), p.def];
+        });
+
         doc.autoTable({
             head: [['Letra', 'Tipo', 'Palabra Correcta', 'Definición']],
             body: rows,
