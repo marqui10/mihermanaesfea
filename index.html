@@ -35,7 +35,6 @@
             position: relative;
         }
 
-        /* Botón PDF RESULTADO */
         .pdf-btn {
             position: absolute; top: 20px; right: 20px;
             background: var(--primary); color: white; border: none;
@@ -45,7 +44,6 @@
         }
         .pdf-btn:hover { background: var(--secondary); transform: translateY(-2px); }
 
-        /* Rosco */
         .rosco-section { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; }
         .rosco-wrapper { position: relative; width: 380px; height: 380px; margin-top: 20px; }
         
@@ -61,7 +59,6 @@
         .success { background: var(--success) !important; color: white !important; border-color: var(--success) !important; }
         .error { background: var(--error) !important; color: white !important; border-color: var(--error) !important; }
 
-        /* Temporizador */
         .timer-container {
             width: 90px; height: 90px;
             display: flex; align-items: center; justify-content: center;
@@ -84,7 +81,6 @@
         }
         .blink-critical { animation: blink 0.5s infinite; color: var(--error) !important; }
 
-        /* Contenido Juego */
         .content-section { flex: 1.2; }
         .info-panel {
             background: #fff; border-radius: 20px; padding: 25px; margin-bottom: 20px;
@@ -95,7 +91,6 @@
             background-color: #f8fafc; border-radius: 12px; cursor: zoom-in;
         }
 
-        /* Botón Multimedia con Anillo */
         .audio-container { position: relative; width: 75px; height: 75px; margin: 15px auto; cursor: pointer; }
         .audio-container svg { transform: rotate(0deg); }
         .progress-ring__circle { transition: stroke-dashoffset 0.1s; transform-origin: 50% 50%; stroke: var(--primary); }
@@ -113,7 +108,6 @@
         .btn-send { background: var(--primary); color: white; }
         .btn-skip { background: var(--gray-light); }
 
-        /* Modal Zoom */
         .modal { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; cursor: zoom-out; }
         .modal img { max-width: 90%; max-height: 90%; border-radius: 8px; transition: 0.3s; transform: scale(0.8); }
         .modal.open img { transform: scale(1); }
@@ -177,33 +171,33 @@
     const TIME_LIMIT = 15;
     const CIRC_AUDIO = 2 * Math.PI * 34;
     const preguntasBase = [   
-        { letra: ‘A’, tipo: ‘empieza’, palabra: ‘Asfixia’, def: ‘Dificultad para respirar debido obstrucción de la garganta o tráquea por un objeto.’ },
-        { letra: ‘B’, tipo: ‘empieza’, palabra: ‘Botiquin’, def: ‘Conjunto de medicamentos y materiales para atender lesiones y emergencias.’ },
-        { letra: ‘C’, tipo: ‘empieza’, palabra: ‘Corazón’, def: ‘Órgano central del sistema circulatorio encargado de impulsar la sangre por todo el organismo.’ },
-        { letra: ‘D’, tipo: ‘empieza’, palabra: ‘Desfibrilación’, def: ‘Descarga eléctrica que se aplica para restablecer el ritmo cardiaco normal.’ },
-        { letra: ‘E’, tipo: ‘empieza’, palabra: ‘Emergencias’, def: ‘Situaciones clínicas que requieren actuación rápida y coordinada.’ },
-        { letra: ‘F’, tipo: ‘empieza’, palabra: ‘Fármaco’, def: ‘Sustancia utilizada para prevenir, diagnosticar o tratar los síntomas de una enfermedad o afección.’ },
-        { letra: ‘G’, tipo: ‘empieza’, palabra: ‘Gasa’, def: ‘Compresa estéril que absorbe fluidos y protege la herida.’ },
-        { letra: ‘H’, tipo: ‘empieza’, palabra: ‘Hemorragia’, def: ‘Flujo de sangre por rotura de vasos sanguíneos.’ },
-        { letra: ‘I’, tipo: ‘empieza’, palabra: ‘Intoxicación’, def: ‘Reacción del organismo ante la entrada de una sustancia tóxica en el organismo que causa lesión, enfermedad o la muerte’ },
-        { letra: ‘J’, tipo: ‘empieza’, palabra: ‘Jeringa’, def: ‘Tubo pequeño y hueco para inyectar o extraer líquidos.’ },
-        { letra: ‘K’, tipo: ‘empieza’, palabra: ‘Ketamina’, def: ‘Medicamento anestésico de rápida acción utilizado para procedimientos quirúrgicos menores.’ },
-        { letra: ‘L’, tipo: ‘empieza’, palabra: ‘Lavado’, def: ‘Limpieza de un órgano, una cavidad corporal o una herida al enjuagarlos con un líquido.’ },
-        { letra: ‘M’, tipo: ‘empieza’, palabra: ‘Movilización’, def: ‘Conjunto de técnicas y actividades manuales o asistidas destinadas a cambiar de posición, trasladar o ayudar a caminar a pacientes con limitaciones de movilidad.’ },
-        { letra: ‘N’, tipo: ‘empieza’, palabra: ‘Necrosis’, def: ‘Proceso patológico caracterizado por la muerte de células y tejidos en un organismo vivo’ },
-        { letra: ‘Ñ’, tipo: ‘contiene’, palabra: ‘Riñón’, def: ‘Órgano excretor, generalmente en número par, que se encarga de filtrar la sangre para eliminar los residuos del metabolismo en forma de orina’ },
-        { letra: ‘O’, tipo: ‘empieza’, palabra: ‘Oxígeno’, def: ‘Elemento químico gaseoso esencial para la respiración que constituye aproximadamente el 21% de la atmósfera terrestre.’ },
-        { letra: ‘P’, tipo: ‘empieza’, palabra: ‘Paro’, def: ‘Fallo súbito de la actividad circulatoria y/o respiratoria.’ },
-        { letra: ‘Q’, tipo: ‘empieza’, palabra: ‘Quemadura’, def: ‘Lesión de piel y tejidos por calor, llamas, sustancias químicas o radiación.’ },
-        { letra: ‘R’, tipo: ‘empieza’, palabra: ‘Reanimación’, def: ‘Conjunto de medidas terapéuticas que se aplican para recuperar o mantener las constantes vitales del organismo’ },
-        { letra: ‘S’, tipo: ‘empieza’, palabra: ‘Síncope’, def: ‘Pérdida repentina y temporal de la consciencia y del tono postural caracterizada por una recuperación rápida y completa.’ },
-        { letra: ‘T’, tipo: ‘empieza’, palabra: ‘Traumatismo’, def: ‘Lesión física o daño en los tejidos u órganos causado por una fuerza o impacto externo como caídas, accidentes o golpes’ },
-        { letra: ‘U’, tipo: ‘empieza’, palabra: ‘Urgencia’, def: ‘Situación patológica que requiere de atención médica rápida aunque no necesariamente inmediata, ya que no representa riesgo inminente de muerte pero sí puede evolucionar a complicaciones graves.’},
-        { letra: ‘V’, tipo: ‘empieza’, palabra: ‘’, def: ‘Protección y contención de una posible herida mediante tela o material adecuado.’ },
-        { letra: ‘W’, tipo: ‘empieza’, palabra: ‘Warfarina’, def: ‘Anticoagulante oral que ayuda a prevenir la formación de coágulos sanguíneos’ },
-        { letra: ‘X’, tipo: ‘contiene’, palabra: ‘Luxación’, def: ‘Desplazamiento de una articulación que requiere realineación y apoyo.’ },
-        { letra: ‘Y’, tipo: ‘contiene’, palabra: ‘Escayola’, def: ‘Vendaje rígido utilizado para inmovilizar de forma total y estricta huesos fracturados, cubriendo articulaciones superiores e inferiores a la lesión’ },
-        { letra: ‘Z’, tipo: ‘empieza’, palabra: ‘zoonosis’, def: ‘Enfermedades infecciosas transmisibles de animales a humanos, relevantes en el contexto de mordeduras o arañazos.’ },
+        { letra: 'A', tipo: 'empieza', palabra: 'Asfixia', def: 'Dificultad para respirar debido obstrucción de la garganta o tráquea por un objeto.' },
+        { letra: 'B', tipo: 'empieza', palabra: 'Botiquin', def: 'Conjunto de medicamentos y materiales para atender lesiones y emergencias.' },
+        { letra: 'C', tipo: 'empieza', palabra: 'Corazón', def: 'Órgano central del sistema circulatorio encargado de impulsar la sangre por todo el organismo.' },
+        { letra: 'D', tipo: 'empieza', palabra: 'Desfibrilación', def: 'Descarga eléctrica que se aplica para restablecer el ritmo cardiaco normal.' },
+        { letra: 'E', tipo: 'empieza', palabra: 'Emergencias', def: 'Situaciones clínicas que requieren actuación rápida y coordinada.' },
+        { letra: 'F', tipo: 'empieza', palabra: 'Fármaco', def: 'Sustancia utilizada para prevenir, diagnosticar o tratar los síntomas de una enfermedad o afección.' },
+        { letra: 'G', tipo: 'empieza', palabra: 'Gasa', def: 'Compresa estéril que absorbe fluidos y protege la herida.' },
+        { letra: 'H', tipo: 'empieza', palabra: 'Hemorragia', def: 'Flujo de sangre por rotura de vasos sanguíneos.' },
+        { letra: 'I', tipo: 'empieza', palabra: 'Intoxicación', def: 'Reacción del organismo ante la entrada de una sustancia tóxica en el organismo que causa lesión, enfermedad o la muerte' },
+        { letra: 'J', tipo: 'empieza', palabra: 'Jeringa', def: 'Tubo pequeño y hueco para inyectar o extraer líquidos.' },
+        { letra: 'K', tipo: 'empieza', palabra: 'Ketamina', def: 'Medicamento anestésico de rápida acción utilizado para procedimientos quirúrgicos menores.' },
+        { letra: 'L', tipo: 'empieza', palabra: 'Lavado', def: 'Limpieza de un órgano, una cavidad corporal o una herida al enjuagarlos con un líquido.' },
+        { letra: 'M', tipo: 'empieza', palabra: 'Movilización', def: 'Conjunto de técnicas y actividades manuales o asistidas destinadas a cambiar de posición, trasladar o ayudar a caminar a pacientes con limitaciones de movilidad.' },
+        { letra: 'N', tipo: 'empieza', palabra: 'Necrosis', def: 'Proceso patológico caracterizado por la muerte de células y tejidos en un organismo vivo' },
+        { letra: 'Ñ', tipo: 'contiene', palabra: 'Riñón', def: 'Órgano excretor, generalmente en número par, que se encarga de filtrar la sangre para eliminar los residuos del metabolismo en forma de orina' },
+        { letra: 'O', tipo: 'empieza', palabra: 'Oxígeno', def: 'Elemento químico gaseoso esencial para la respiración que constituye aproximadamente el 21% de la atmósfera terrestre.' },
+        { letra: 'P', tipo: 'empieza', palabra: 'Paro', def: 'Fallo súbito de la actividad circulatoria y/o respiratoria.' },
+        { letra: 'Q', tipo: 'empieza', palabra: 'Quemadura', def: 'Lesión de piel y tejidos por calor, llamas, sustancias químicas o radiación.' },
+        { letra: 'R', tipo: 'empieza', palabra: 'Reanimación', def: 'Conjunto de medidas terapéuticas que se aplican para recuperar o mantener las constantes vitales del organismo' },
+        { letra: 'S', tipo: 'empieza', palabra: 'Síncope', def: 'Pérdida repentina y temporal de la consciencia y del tono postural caracterizada por una recuperación rápida y completa.' },
+        { letra: 'T', tipo: 'empieza', palabra: 'Traumatismo', def: 'Lesión física o daño en los tejidos u órganos causado por una fuerza o impacto externo como caídas, accidentes o golpes' },
+        { letra: 'U', tipo: 'empieza', palabra: 'Urgencia', def: 'Situación patológica que requiere de atención médica rápida aunque no necesariamente inmediata, ya que no representa riesgo inminente de muerte pero sí puede evolucionar a complicaciones graves.'},
+        { letra: 'V', tipo: 'empieza', palabra: 'Vendaje', def: 'Protección y contención de una posible herida mediante tela o material adecuado.' },
+        { letra: 'W', tipo: 'empieza', palabra: 'Warfarina', def: 'Anticoagulante oral que ayuda a prevenir la formación de coágulos sanguíneos' },
+        { letra: 'X', tipo: 'contiene', palabra: 'Luxación', def: 'Desplazamiento de una articulación que requiere realineación y apoyo.' },
+        { letra: 'Y', tipo: 'contiene', palabra: 'Escayola', def: 'Vendaje rígido utilizado para inmovilizar de forma total y estricta huesos fracturados, cubriendo articulaciones superiores e inferiores a la lesión' },
+        { letra: 'Z', tipo: 'empieza', palabra: 'zoonosis', def: 'Enfermedades infecciosas transmisibles de animales a humanos, relevantes en el contexto de mordeduras o arañazos.' },
     ];
 
 
@@ -235,8 +229,13 @@
         document.getElementById('pista-texto').innerText = `${data.tipo === 'empieza' ? 'Empieza por' : 'Contiene'} la ${data.letra}`;
         document.getElementById('definicion-texto').innerText = data.def;
         document.getElementById('item-img').src = `imagen/imagen${data.letra}.png`;
-        player.src = `audio/audio${data.letra}.oga`; player.load();
-        resetAudioUI();
+        
+        // Carga y REPRODUCCIÓN AUTOMÁTICA
+        player.src = `audio/audio${data.letra}.oga`; 
+        player.load();
+        player.play().catch(e => console.log("Auto-play bloqueado por el navegador hasta interactuar"));
+        btnContainer.classList.add('playing');
+        
         document.getElementById('user-input').value = ''; document.getElementById('user-input').focus();
         startTimer();
     }
@@ -275,7 +274,15 @@
     }
 
     function pasar() { clearInterval(timerInterval); player.pause(); currentIdx = (currentIdx + 1) % pendientes.length; render(); }
-    function avanzar() { clearInterval(timerInterval); player.pause(); pendientes.splice(currentIdx, 1); if (currentIdx >= pendientes.length) currentIdx = 0; render(); }
+    function avanzar() { 
+        clearInterval(timerInterval); 
+        player.pause(); 
+        pendientes.splice(currentIdx, 1); 
+        if (pendientes.length === 0) return end();
+        if (currentIdx >= pendientes.length) currentIdx = 0; 
+        render(); 
+    }
+    
     function end() { clearInterval(timerInterval); document.querySelector('.rosco-section').style.display = 'none'; document.getElementById('ui-juego').style.display = 'none'; document.getElementById('ui-final').style.display = 'block'; document.getElementById('score').innerText = aciertos; }
 
     function openModal(src) { const m = document.getElementById('image-modal'); document.getElementById('modal-content').src = src; m.style.display = "flex"; setTimeout(() => m.classList.add('open'), 10); }
@@ -284,15 +291,12 @@
     function descargarSoluciones() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-        
-        // Cabecera Corporativa
         doc.setFillColor(26, 42, 108); doc.rect(0, 0, 210, 40, 'F');
         doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(22);
         doc.text("REPORTE DE SOLUCIONES", 105, 20, { align: "center" });
         doc.setFontSize(10); doc.setFont("helvetica", "normal");
         doc.text("Proyecto TFM - Aplicación Multimedia Pasapalabra", 105, 30, { align: "center" });
 
-        // Generar tabla con jspdf-autotable
         const rows = preguntasBase.map(p => [p.letra, p.tipo.toUpperCase(), p.palabra.toUpperCase(), p.def]);
         doc.autoTable({
             head: [['Letra', 'Tipo', 'Palabra Correcta', 'Definición']],
@@ -307,7 +311,6 @@
                 2: { cellWidth: 35, fontStyle: 'bold', textColor: [26, 42, 108] }
             }
         });
-
         doc.save("Reporte_Soluciones_Pasapalabra.pdf");
     }
 
